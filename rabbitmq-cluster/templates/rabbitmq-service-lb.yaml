@@ -1,0 +1,21 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: {{ .Release.Name }} #引用内置外部集群名称变量
+    type: LoadBalancer
+  name: {{ .Values.loadbalancerService.name }} #定义loadbalancer名称
+  namespace: {{ .Release.Namespace }} #引用内置namespace变量
+spec:
+  ports:
+  - name: http
+    port: 15672
+    protocol: TCP
+    targetPort: 15672
+  - name: amqp
+    port: 5672
+    protocol: TCP
+    targetPort: 5672
+  selector:  #引用pod label函数变量
+    {{- include "rabbitmq-cluster.selectorLabels" . | nindent 4 }}
+  type: {{ .Values.loadbalancerService.type }} #引用values.yaml文件变量loadbalancerservice

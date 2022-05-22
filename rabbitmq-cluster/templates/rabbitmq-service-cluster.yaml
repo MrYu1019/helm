@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: {{ .Release.Name }} #定义内置变量引用集群外部名称
+  name: {{ .Values.headlessService.name }} #定义values.yaml文件中的headheadless service名称
+  namespace: {{ .Release.Namespace }} #定义内置namespace变量名称
+spec:
+  clusterIP: None
+  ports:
+  - name: amqp
+    port: 5672
+    targetPort: 5672
+  selector: #定义集群selectorlabels变量
+    {{- include "rabbitmq-cluster.selectorLabels" . | nindent 4 }}
